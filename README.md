@@ -1,6 +1,8 @@
 apljck
 ======
 
+WARNING: DOESN'T WORK YET. JUST STARTED IT.
+
 There doesn't seem to be a Jupyter kernel for GNU APL (only one for
 Dyalog) so this is my plain-text substitute in a few lines of sh.
 
