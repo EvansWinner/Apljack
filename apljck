@@ -16,7 +16,7 @@ command -v ${A}>/dev/null||(echo GNU APL not found; check '$A' variable;exit 1)
 ## Start GNU APL as a TCP server. This will persist until the program is done.
 ${A} --tcp_port ${P}&
 ## Process lines (this is the main bit)
-export flag=0
+export flag=0 # 1=we are on a code block; 0=we are not
 init array
 while read -r l;do
   if [ $l = "{{{" && $flag -eq 0 ]
