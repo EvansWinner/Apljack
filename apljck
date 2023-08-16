@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-### Use: apljck file
+### Use: $ apljck file
 ### Defaults
 T=1           # IMPORTANT: This is the timeout in seconds after every call
               # before disconnecting from the apl session. If you make this too
@@ -16,18 +16,25 @@ command -v ${A}>/dev/null||(echo GNU APL not found; check '$A' variable;exit 1)
 ## Start GNU APL as a TCP server. This will persist until the program is done.
 ${A} --tcp_port ${P}&
 ## Process lines (this is the main bit)
-export codeflag=0
+export flag=0
+init array
 while read -r l;do
-  if [ '$l' = '{{{' ];then 
-    codeflag=1
-    echo '.---Code cell start---.'
-  elif [ '$l' = '}}}' ];then
-    codeflag=0
-    echo "'--- Code cell end ---'"
-  else echo ${l}
-  fi
-  if [ $codeflag -eq 1 ];then echo '$l'|nc ${H} ${P};fi
+  if [ $l = "{{{" && $flag -eq 0 ]
+    flag =: 1
+  if $l = "}}}" && $flag -eq 1 ]
+    flag =: 0
+    print ".-----APL-------"
+    print array
+    print "----------------"
+    print ".---Results-----"
+    feed array to APL and output result
+    print "'---------------"
+  if $l != "}}}" && $l != "{{{" && $flag = 0 ]
+    echo $l
+  if $l != "}}}" && $l != "{{{" && $flag = 1 ]
+    add line to array
+
 done<${F}
 ## Disconnect
-echo ')off'|nc ${H} ${P}
+echo ')off'|timeout 1 nc ${H} ${P}
 
