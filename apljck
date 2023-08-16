@@ -5,7 +5,7 @@ T=1           # IMPORTANT: This is the timeout in seconds after every call
               # before disconnecting from the apl session. If you make this too
               # short, you will disconnect before you've gotten your results
               # back from apl.
-P=1337        # TCP port
+P=1337        # TCP port. Yes, I'm a nerd.
 A=apl         # APL executable (path/)name. We assume it's on the exec path
 F=$1          # File name
 ### Sanity checks, setup, and convenience things
