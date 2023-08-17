@@ -15,21 +15,22 @@ command -v ${a}>/dev/null||(echo "GNU APL not found; check '$a' variable";exit 1
 [ ! -f "${f}" ]&&echo "File not found"&&exit 1
 ### Main
 ${a} --tcp_port ${p}& # Start APL as TCP server. Persists til the program done.
-export flag=0 # 1=we are on a code block; 0=we are not
-export buf="" # Buffer to hold code blocks for later processing
+sleep 1
+export flag=0         # 1=we are on a code block; 0=we are not
+export buf=""         # Buffer to hold code blocks for later processing
 while read -r l;do
-  if [ "${l}" = "{{{" ];then flag=1;fi# We're starting a code block
-  if [ "${l}" = "}}}" ]&&[ $flag -eq 1 ];then # Ending code block. Process it.
+  if [ "${l}" = "{{{" ];then flag=1;fi # Starting a code block
+  if [ "${l}" = "}}}" ];then           # Ending code block. Process it.
     flag=0
     echo ".-----APL-------"
     echo "${buf}"
     echo "'---------------"
     echo ".---Results-----"
-    echo "${buff}"|timeout "${t}" nc "${h}" "${p}" # Feed the code buffer to APL
+    echo "${buff}"|timeout $t nc "${h}" "${p}" # Feed the code buffer to APL
     echo "'---------------"
     fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 0 ];then echo "${l}";fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 1 ];then buff=${buff:+${buff}, }${l};fi
 done<"${f}"
-echo ')off'|timeout "${t}" nc "${h}" "${p}" # Disconnect
+echo ")off"|timeout $t nc $h $p # Disconnect
 
