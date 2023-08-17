@@ -1,20 +1,20 @@
 #!/usr/bin/env sh
 ### Use: $ apljck file
 ### Defaults
-T=1           # IMPORTANT: This is the timeout in seconds after every call
+t=1           # IMPORTANT: This is the timeout in seconds after every call
               # before disconnecting from the apl session. If you make this too
               # short, you will disconnect before you've gotten your results
               # back from apl.
-P=1337        # TCP port. Yes, I'm a nerd.
-A=apl         # APL executable (path/)name. We assume it's on the exec path
-F=$1          # File name
+p=9384        # TCP port. Unassigned per https://www.speedguide.net/port.php?port=9385
+a=apl         # APL executable (path/)name. We assume it's on the exec path
+f=$1          # File name
 ### Sanity checks, setup, and convenience things
-H=$(hostname)
-command -v ${A}>/dev/null||(echo GNU APL not found; check '$A' variable;exit 1)
-[ ! -f ${F} ]&&echo 'File not found'&&exit 1
+h=$(hostname)
+command -v ${a}>/dev/null||(echo GNU APL not found; check '$a' variable;exit 1)
+[ ! -f ${f} ]&&echo 'File not found'&&exit 1
 ### Main program
 ## Start GNU APL as a TCP server. This will persist until the program is done.
-${A} --tcp_port ${P}&
+${a} --tcp_port ${p}&
 ## Process lines (this is the main bit)
 export flag=0 # 1=we are on a code block; 0=we are not
 init array
@@ -34,7 +34,7 @@ while read -r l;do
   if $l != "}}}" && $l != "{{{" && $flag = 1 ]
     add line to array
 
-done<${F}
+done<${f}
 ## Disconnect
-echo ')off'|timeout 1 nc ${H} ${P}
+echo ')off'|timeout ${t} nc ${h} ${p}
 
