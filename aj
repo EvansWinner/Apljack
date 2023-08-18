@@ -1,19 +1,21 @@
 #!/usr/bin/env sh
 ### aj (apljack) --- Add code output to text mixed with GNU APL code
+
 ### Use: $ aj file
+
 ### Defaults
 a=apl         # APL executable (path/)name. We assume it's on the exec path
 arg="--script --OFF --noColor"
-f=$1          # File name
-### Sanity checks, setup, and convenience things
+f=$1          # Name of file to process
+
+### Sanity checks and setup
 command -v ${a}>/dev/null||(echo "GNU APL not found; check '$a' variable";exit 1)
 [ ! -f "${f}" ]&&echo "File not found"&&exit 1
-### Main
-p=$(mktemp)           # Named pipe name
+p=$(mktemp -u)        # Named pipe name
 mkfifo "${p}"         # Make the named pipe
 
+### Main
 "${a}" ${arg}<"${p}"& # Start APL in the background
-exec 3>p              # Keep the pipe open for multiple writes
 export flag=0         # 1=we are on a code block; 0=we are not
 export buff=""        # Buffer to hold code blocks for later processing
 export nl="\n"        # Newline char
@@ -25,7 +27,7 @@ while read -r l;do
     echo -n "${buff}"
     echo "'---------------"
     echo ".---Results-----"
-    echo "${buff}">p # Feed the code buffer to APL by way of the named pipe
+    echo "${buff}">"${p}" # Feed the code buffer to APL by way of the named pipe
     buff=""
     echo "'---------------"
   fi
