@@ -2,7 +2,6 @@
 ### aj (apljack) --- Add code output to text mixed with GNU APL code
 ### Use: $ aj file
 ### Defaults
-p=p           # Named pipe name
 a=apl         # APL executable (path/)name. We assume it's on the exec path
 arg="--script --OFF --noColor"
 f=$1          # File name
@@ -10,7 +9,9 @@ f=$1          # File name
 command -v ${a}>/dev/null||(echo "GNU APL not found; check '$a' variable";exit 1)
 [ ! -f "${f}" ]&&echo "File not found"&&exit 1
 ### Main
+p=$(mktemp)           # Named pipe name
 mkfifo "${p}"         # Make the named pipe
+
 "${a}" ${arg}<"${p}"& # Start APL in the background
 exec 3>p              # Keep the pipe open for multiple writes
 export flag=0         # 1=we are on a code block; 0=we are not
@@ -34,5 +35,5 @@ while read -r l;do
     buff="${buff}""${l}";
   fi
 done<"${f}"
-echo ")off)">p
-rm $p 
+echo ")off)">"${p}"
+rm -f "${p}" 
