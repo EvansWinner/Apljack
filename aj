@@ -15,21 +15,23 @@ p=$(mktemp -u)        # Named pipe name
 mkfifo "${p}"         # Make the named pipe
 
 ### Main
-"${a}" ${arg}<"${p}"& # Start APL in the background
+exec 3<> "${p}"
+rm -f "${p}"
+"${a}" ${arg}<&3 & # Start APL in the background
 export flag=0         # 1=we are on a code block; 0=we are not
 export buff=""        # Buffer to hold code blocks for later processing
 export nl="\n"        # Newline char
 while read -r l;do
-  if [ "${l}" = "{{{" ];then flag=1;fi # Starting a code block
-  if [ "${l}" = "}}}" ];then           # Ending code block. Process it.
+  if [ "${l}" = "{{{" ];then flag=1;fi   # Starting a code block
+  if [ "${l}" = "}}}" ];then             # Ending code block. Process it.
     flag=0
-    echo ".-----APL-------"
-    echo -n "${buff}"
-    echo "'---------------"
-    echo ".---Results-----"
-    echo "${buff}">"${p}" # Feed the code buffer to APL by way of the named pipe
+    echo ".-APL-----------------------------------"
+    echo -n "${buff}" | sed "s/^/     /" # sed to indent output some
+    echo "'---------------------------------------"
+    echo ".-Results-------------------------------"
+    echo "${buff}">&3 # Feed the code buffer to APL by way of the named pipe
     buff=""
-    echo "'---------------"
+    echo "'---------------------------------------"
   fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 0 ];then echo "${l}";fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 1 ];then
@@ -37,5 +39,4 @@ while read -r l;do
     buff="${buff}""${l}";
   fi
 done<"${f}"
-echo ")off)">"${p}"
-rm -f "${p}" 
+echo ")off)">&3
