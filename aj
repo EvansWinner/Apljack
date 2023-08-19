@@ -12,13 +12,14 @@ f=$1          # Name of file to process
 command -v ${a}>/dev/null||(echo "GNU APL not found; check '$a' variable";exit 1)
 [ ! -f "${f}" ]&&echo "File not found"&&exit 1
 p=$(mktemp -u)        # Named pipe name
-mkfifo "${p}"         # Make the named pipe
+mkfifo ${p}         # Make the named pipe
 
 ### Main
-exec 3<> "${p}"
-rm -f "${p}"
-"${a}" ${arg}<&3 & # Start APL in the background
+#exec 3<> "${p}"
 export flag=0         # 1=we are on a code block; 0=we are not
+#"${a}" ${arg}<&3 & # Start APL in the background
+"${a}" ${arg} <>"${p}" & # Start APL in the background\
+pid=$!                # Get the PID of APL
 export buff=""        # Buffer to hold code blocks for later processing
 export nl="\n"        # Newline char
 while read -r l;do
@@ -26,10 +27,11 @@ while read -r l;do
   if [ "${l}" = "}}}" ];then             # Ending code block. Process it.
     flag=0
     echo ".-APL-----------------------------------"
-    echo -n "${buff}" | sed "s/^/     /" # sed to indent output some
+    echo -n "${buff}" | sed "s/^/     /" # sed - indents for aesthetic reasons
     echo "'---------------------------------------"
     echo ".-Results-------------------------------"
-    echo "${buff}">&3 # Feed the code buffer to APL by way of the named pipe
+    echo "${buff}">"${p}" # Feed the code buffer to APL by way of the named pipe
+    timeout 1 cat /proc/$pid/fd/1
     buff=""
     echo "'---------------------------------------"
   fi
@@ -39,4 +41,4 @@ while read -r l;do
     buff="${buff}""${l}";
   fi
 done<"${f}"
-echo ")off)">&3
+echo ")off)">"${p}"
