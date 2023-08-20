@@ -1,20 +1,20 @@
-apljck
-======
-
-WARNING: DOESN'T WORK YET. JUST STARTED IT.
+apljack
+=======
 
 There doesn't seem to be a Jupyter kernel for GNU APL (only one for
 Dyalog) so this is my plain-text substitute in a few lines of sh.
 
 Turn plain text with GNU APL code in code blocks into plain text with
 the code blocks AND the output of the code. Requires only /bin/sh,
-/usr/bin/env, Netcat (nc) and of course, GNU APL. 
+/usr/bin/env, mktemp, mkfifo, and of course, GNU APL. 
 
-Blocks are defined with 
+The main point is that APL state is conserved between code blocks.
 
-    {{{
-      [add brillian code here]
-    }}}
+Blocks are defined with triplets of opening and closing curly brackets:
+
+     {{{
+     [add brilliant code here]
+     }}}
 
 See test.aplj for a small example that can be processed with
 
