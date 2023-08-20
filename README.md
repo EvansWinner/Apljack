@@ -16,9 +16,23 @@ Blocks are defined with triplets of opening and closing curly brackets:
      [add brilliant code here]
      }}}
 
-See test.aplj for a small example that can be processed with
+See test.aj for a small example that can be processed with
 
-    $ apljck test.aplj
+    $ aj test.aj
+
+You don't have to use the .aj extension. I just did for the heck of it.
+
+Also, because of the nature of the hack (and yes, it's a terrible hack)
+you can't do this:
+
+    $ aj text.aj > output.txt
+
+It will get confused and die. So, unfortunately, you have to just use
+a terminal emulator with which you can cut and paste the output. I do
+not like this. No, Sam-I-Am, I do not like this one bit. But it's
+better than nothing. At some point I may try to fix it, when I
+understand Unix pipes and redirection and file descriptors, and all
+the rest better.
 
 See the variables section at the top of the code. In particular, if
 you think you will need more than one second for APL to process a line
