@@ -42,4 +42,4 @@ while read -r l;do
     buff="${buff}""${l}";
   fi
 done<"${f}"
-echo ")off)">"${p}"
+echo ")off">"${p}"
