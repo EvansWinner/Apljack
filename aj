@@ -7,6 +7,7 @@
 a=apl         # APL executable (path/)name. We assume it's on the exec path
 arg="--script --OFF --noColor"
 f=$1          # Name of file to process
+t=1           # Timeout time. Yes, this is horrible
 
 ### Sanity checks and setup
 command -v ${a}>/dev/null||(echo "GNU APL not found; check '$a' variable";exit 1)
@@ -31,7 +32,7 @@ while read -r l;do
     echo "'---------------------------------------"
     echo ".-Results-------------------------------"
     echo "${buff}">"${p}" # Feed the code buffer to APL by way of the named pipe
-    timeout 1 cat /proc/$pid/fd/1
+    timeout $t cat /proc/$pid/fd/1
     buff=""
     echo "'---------------------------------------"
   fi
