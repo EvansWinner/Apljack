@@ -36,5 +36,8 @@ the rest better.
 
 See the variables section at the top of the code. In particular, if
 you think you will need more than one second for APL to process a line
-of code, increase the value of $T.
+of code, increase the value of $t.
+
+Finally note that BSD doesn't have the same /proc system setup that Linux does, so this doesn't work there, but a better way to do this should be found anyway. It would be nice if GNU APL had something like Haskell's "bird style" comments. Then none of this would be necessary.
+
 
