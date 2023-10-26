@@ -28,12 +28,16 @@ while read -r l;do
   if [ "${l}" = "}}}" ];then             # Ending code block. Process it.
     flag=0
     echo ".-APL-----------------------------------"
+    echo
     printf "${buff}" | sed "s/^/     /" # sed - indents for aesthetic reasons
+    echo
     echo "'---------------------------------------"
     echo ".-Results-------------------------------"
+    echo
     echo "${buff}">"${p}" # Feed the code buffer to APL by way of the named pipe
     timeout $t cat /proc/$pid/fd/1
     buff=""
+    echo
     echo "'---------------------------------------"
   fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 0 ];then echo "${l}";fi
@@ -45,5 +49,5 @@ done<"${f}"
 echo ")off">"${p}"
 rm -f "${p}"}
 { kill -9 ${pid} && wait ${pid} ; } 2>/dev/null
-{ kill -9 $(ps|grep APserver|cut -f 2 -d" ") ;} 2>/dev/null
+{ kill -9 $(ps|grep APserver|cut -f 1 -d' ') ; } 2>/dev/null
 
