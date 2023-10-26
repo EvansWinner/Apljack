@@ -42,8 +42,8 @@ while read -r l;do
   fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 0 ];then echo "${l}";fi
   if [ "${l}" != "}}}" ]&&[ "${l}" != "{{{" ]&&[ $flag = 1 ];then
-    l="${l}""${nl}"
-    buff="${buff}""${l}";
+    l="${l}\n"
+    buff="${buff}${l}";
   fi
 done<"${f}"
 echo ")off">"${p}"
