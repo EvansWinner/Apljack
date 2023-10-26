@@ -28,7 +28,7 @@ while read -r l;do
   if [ "${l}" = "}}}" ];then             # Ending code block. Process it.
     flag=0
     echo ".-APL-----------------------------------"
-    echo -n "${buff}" | sed "s/^/     /" # sed - indents for aesthetic reasons
+    printf "${buff}" | sed "s/^/     /" # sed - indents for aesthetic reasons
     echo "'---------------------------------------"
     echo ".-Results-------------------------------"
     echo "${buff}">"${p}" # Feed the code buffer to APL by way of the named pipe
@@ -43,3 +43,7 @@ while read -r l;do
   fi
 done<"${f}"
 echo ")off">"${p}"
+rm -f "${p}"}
+{ kill -9 ${pid} && wait ${pid} ; } 2>/dev/null
+{ kill -9 $(ps|grep APserver|cut -f 2 -d" ") ;} 2>/dev/null
+
